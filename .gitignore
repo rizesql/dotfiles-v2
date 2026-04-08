@@ -1,0 +1,8 @@
+.ssh/**/*
+!.ssh/config
+.zcompdump
+.DS_STORE*
+
+*.local
+allowed_signers
+result/*
