@@ -20,7 +20,7 @@ lib.darwinSystem' (
     users.knownUsers = [ user ];
 
     home-manager.users.${user}.home = {
-      stateVersion = "25.11";
+      stateVersion = "26.05";
       homeDirectory = home;
     };
 

@@ -8,7 +8,8 @@
 
         settings = {
           theme = "catppuccin-mocha";
-          font-family = "Berkeley Mono";
+          font-family = "CommitMono-rizesql";
+          # font-family = "Berkeley Mono";
           font-thicken = true;
           cursor-style = "block";
           window-theme = "ghostty";
