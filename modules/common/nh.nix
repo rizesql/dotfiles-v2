@@ -10,11 +10,13 @@ in
 {
   environment.systemPackages = [ pkgs.nh ];
 
-  environment.variables = lib.mkIf config.isLinux {
+  environment.variables = {
     NH_FLAKE = flakePath;
+    NH_DARWIN_FLAKE = flakePath;
   };
 
   launchd.user.envVariables = lib.mkIf config.isDarwin {
     NH_FLAKE = flakePath;
+    NH_DARWIN_FLAKE = flakePath;
   };
 }
