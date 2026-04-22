@@ -11,3 +11,6 @@ format = ssh
 
 [commit]
 gpgsign = true
+
+[url "git@github.com-rizesql:"]
+	insteadOf = git@github.com:

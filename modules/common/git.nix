@@ -12,7 +12,7 @@
         package = pkgs.git;
 
         settings = {
-          aliases = {
+          alias = {
             main-branch = "!git symbolic-ref refs/remotes/origin/HEAD | cut -d '/' -f4";
             fomo = "!git fetch origin $(git main-branch) && git rebase origin/$(git main-branch) --autostash";
             save = "!git commit -am \"commit\"";
