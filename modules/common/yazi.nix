@@ -5,6 +5,12 @@
       programs.yazi = {
         enable = true;
         package = pkgs.yazi;
+
+        settings = {
+          mgr = {
+            show_hidden = true;
+          };
+        };
       };
     }
   ];

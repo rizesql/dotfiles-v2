@@ -22,6 +22,8 @@
       zellij
       zoxide
 
+      pi-coding-agent
+
       age
       sops
       direnv
@@ -30,13 +32,8 @@
       gh
       lazygit
       delta
-
-      discord
-      obsidian
     ]
     ++ lib.optionals config.isDarwin [
       pam-reattach
-      raycast
-      orbstack
     ];
 }

@@ -10,8 +10,9 @@
         enable = true;
         package = pkgs.zellij;
 
-        enableFishIntegration = true;
-        exitShellOnExit = true;
+        enableFishIntegration = false;
+        attachExistingSession = false;
+        exitShellOnExit = false;
 
         extraConfig = lib.configFile "zellij/config.kdl" |> lib.readFile;
         layouts = {

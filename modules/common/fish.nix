@@ -24,16 +24,17 @@ in
         enable = true;
         package = pkgs.fish;
         shellAliases = config.environment.shellAliases;
+        generateCompletions = false;
 
         shellInit = ''
           ${envInit}
         '';
 
         interactiveShellInit = ''
-          if type -q ZELLIJ
-              function _zellij_update_tabname --on-variable PWD
-                  zellij action rename-tab (basename $PWD) 2>/dev/null
-              end
+          export ZELLIJ_CONFIG_DIR=$HOME/.config/zellij
+
+          if [ "$TERM" = "xterm-ghostty" ]
+              eval (zellij setup --generate-auto-start fish | string collect)
           end
         '';
       };

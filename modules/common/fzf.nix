@@ -7,6 +7,7 @@
         package = pkgs.fzf;
 
         defaultCommand = "fd --type f --hidden --follow";
+        historyWidget.command = "";
       };
     }
   ];

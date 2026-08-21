@@ -6,3 +6,6 @@
 *.local
 allowed_signers
 result/*
+
+.config/pi/workspace/node_modules/
+.config/pi/workspace/packages/*/node_modules/

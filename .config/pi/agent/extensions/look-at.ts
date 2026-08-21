@@ -1,0 +1,342 @@
+/**
+ * look_at tool — multimodal file analysis via gpt-5.6-luna sub-agent.
+ *
+ * hooks into pi's existing read tool pipeline: the sub-agent calls
+ * read(path) which returns images as base64 content parts. the sub-agent
+ * sees the image and analyzes it per the user's objective.
+ *
+ * for text files, the sub-agent reads and summarizes/extracts per
+ * objective — useful when you need analyzed data, not raw contents.
+ *
+ * supports reference files for comparison (e.g., before/after
+ * screenshots, two versions of a diagram).
+ */
+
+import type { ExtensionAPI, ToolDefinition } from "@earendil-works/pi-coding-agent";
+import { Container, Text } from "@earendil-works/pi-tui";
+import { Type } from "typebox";
+import { getEnabledExtensionConfig, type ExtensionConfigSchema } from "#core/config";
+import {
+  isPiSpawnModelValue,
+  isPiSpawnFailure,
+  piSpawn,
+  resolvePrompt,
+  zeroUsage,
+  type PiSpawnModel,
+} from "#core/pi-spawn";
+import { withPromptPatch } from "#core/prompt-patch";
+import {
+  applySessionMeta,
+  getFinalOutput,
+  renderAgentTree,
+  registerSubAgentErrorNormalization,
+  subAgentResult,
+  type SingleResult,
+} from "#core/sub-agent-render";
+
+type LookAtExtConfig = {
+  model?: PiSpawnModel;
+  extensionTools: string[];
+  builtinTools: string[];
+  promptFile: string;
+  promptString: string;
+};
+
+type LookAtExtensionDeps = {
+  getEnabledExtensionConfig: typeof getEnabledExtensionConfig;
+  resolvePrompt: typeof resolvePrompt;
+  withPromptPatch: typeof withPromptPatch;
+};
+
+const CONFIG_DEFAULTS: LookAtExtConfig = {
+  model: undefined,
+  extensionTools: ["read", "ls"],
+  builtinTools: ["read", "ls"],
+  promptFile: "",
+  promptString: "",
+};
+
+const DEFAULT_DEPS: LookAtExtensionDeps = {
+  getEnabledExtensionConfig,
+  resolvePrompt,
+  withPromptPatch,
+};
+
+function isNonEmptyString(value: unknown): value is string {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every((item) => typeof item === "string");
+}
+
+function isLookAtExtConfig(value: Record<string, unknown>): value is LookAtExtConfig {
+  return (
+    (value.model === undefined || isPiSpawnModelValue(value.model)) &&
+    isStringArray(value.extensionTools) &&
+    isStringArray(value.builtinTools) &&
+    typeof value.promptFile === "string" &&
+    typeof value.promptString === "string"
+  );
+}
+
+const LOOK_AT_CONFIG_SCHEMA: ExtensionConfigSchema<LookAtExtConfig> = {
+  validate: isLookAtExtConfig,
+};
+
+const DEFAULT_SYSTEM_PROMPT: string = String.raw`You are an AI assistant that analyzes files for a software engineer.
+
+# Core Principles
+
+- Be concise and direct. Minimize output while maintaining accuracy.
+- Focus only on the user's objective. Do not add tangential information.
+- No preamble, disclaimers, or summaries unless specifically relevant.
+- Never start with flattery ("great question", "interesting file", etc.).
+- A wrong answer is worse than no answer. When uncertain, say so.
+
+# Precision Guidelines
+
+- When analyzing images: describe exactly what you see, do not guess or infer.
+- When analyzing code: reference specific line numbers and symbols.
+- When analyzing documents: extract the specific information requested.
+
+# Comparing Files
+
+When reference files are provided alongside the main file, you are being asked to compare them.
+- Systematically identify differences and similarities.
+- Be specific: mention exact locations, values, or visual elements that differ.
+- Structure the comparison clearly (e.g., "File A has X, File B has Y").
+
+# Output Format
+
+- Use GitHub-flavored Markdown.
+- Use code fences with language tags for code snippets.
+- No emojis or decorative symbols.
+- Keep responses focused and brief.
+`;
+
+export interface LookAtConfig extends Partial<
+  Pick<LookAtExtConfig, "model" | "extensionTools" | "builtinTools">
+> {
+  systemPrompt?: string;
+}
+
+export interface LookAtParams {
+  path: string;
+  objective: string;
+  context: string;
+  referenceFiles?: string[];
+}
+
+export function createLookAtTool(config: LookAtConfig = {}): ToolDefinition<any> {
+  return {
+    name: "look_at",
+    label: "Look At",
+    description:
+      "Extract specific information from a local file (including images and other media).\n\n" +
+      "Use this tool when you need to extract or summarize information from a file " +
+      "without getting the literal contents. Always provide a clear objective.\n\n" +
+      "Pass reference files when you need to compare two or more things.\n\n" +
+      "## When to use this tool\n\n" +
+      "- Analyzing images that the Read tool cannot interpret\n" +
+      "- Extracting specific information or summaries from documents\n" +
+      "- Describing visual content in images or diagrams\n" +
+      "- When you only need analyzed/extracted data, not raw file contents\n\n" +
+      "## When NOT to use this tool\n\n" +
+      "- For source code or plain text files where you need exact contents — use Read instead\n" +
+      "- When you need to edit the file afterward (you need literal content from Read)\n" +
+      "- For simple file reading where no interpretation is needed",
+
+    parameters: Type.Object({
+      path: Type.String({
+        description: "Workspace-relative or absolute path to the file to analyze.",
+      }),
+      objective: Type.String({
+        description:
+          "Natural-language description of the analysis goal (e.g., summarize, extract data, describe image).",
+      }),
+      context: Type.String({
+        description: "The broader goal and context for the analysis.",
+      }),
+      referenceFiles: Type.Optional(
+        Type.Array(Type.String(), {
+          description: "Optional list of paths to reference files for comparison.",
+        }),
+      ),
+    }),
+
+    async execute(toolCallId, params, signal, onUpdate, ctx) {
+      const p = params as LookAtParams;
+      let parentSession: string | undefined;
+      try {
+        parentSession = ctx.sessionManager?.getSessionFile?.() ?? undefined;
+      } catch {}
+
+      // build the task prompt: read file(s), then analyze
+      const parts: string[] = [];
+
+      parts.push(`Read the file at "${p.path}" using the read tool.`);
+
+      if (p.referenceFiles && p.referenceFiles.length > 0) {
+        for (const ref of p.referenceFiles) {
+          parts.push(`Also read the reference file at "${ref}".`);
+        }
+      }
+
+      parts.push("");
+      parts.push(`Context: ${p.context}`);
+      parts.push("");
+      parts.push(`Analyze with this objective: ${p.objective}`);
+
+      if (p.referenceFiles && p.referenceFiles.length > 0) {
+        parts.push("");
+        parts.push(
+          "Compare the main file against the reference file(s). Identify all differences and similarities.",
+        );
+      }
+
+      const fullTask = parts.join("\n");
+
+      const singleResult: SingleResult = {
+        agent: "look_at",
+        task: p.objective,
+        exitCode: -1,
+        messages: [],
+        usage: zeroUsage(),
+      };
+
+      const systemPrompt = config.systemPrompt || DEFAULT_SYSTEM_PROMPT;
+
+      const result = await piSpawn({
+        cwd: ctx.cwd,
+        task: fullTask,
+        model: config.model ?? CONFIG_DEFAULTS.model,
+        builtinTools: config.builtinTools ?? CONFIG_DEFAULTS.builtinTools,
+        extensionTools: config.extensionTools ?? CONFIG_DEFAULTS.extensionTools,
+        systemPromptBody: systemPrompt,
+        signal,
+        session: { persist: false, parentSession },
+        owner: { toolCallId, toolName: "look_at" },
+        onUpdate: (partial) => {
+          singleResult.messages = partial.messages;
+          singleResult.usage = partial.usage;
+          singleResult.model = partial.model;
+          singleResult.stopReason = partial.stopReason;
+          singleResult.errorMessage = partial.errorMessage;
+          singleResult.lifecycle = partial.lifecycle;
+          applySessionMeta(singleResult, partial.session);
+          if (onUpdate) {
+            onUpdate({
+              content: [
+                {
+                  type: "text",
+                  text: getFinalOutput(partial.messages) || "(analyzing...)",
+                },
+              ],
+              details: singleResult,
+            } as any);
+          }
+        },
+      });
+
+      singleResult.exitCode = result.exitCode;
+      singleResult.messages = result.messages;
+      singleResult.usage = result.usage;
+      singleResult.model = result.model;
+      singleResult.stopReason = result.stopReason;
+      singleResult.errorMessage = result.errorMessage;
+      singleResult.lifecycle = result.lifecycle;
+      applySessionMeta(singleResult, result.session);
+
+      const isError = isPiSpawnFailure(result);
+      const output = getFinalOutput(result.messages) || "(no output)";
+      const text = isError ? result.errorMessage || result.stderr || output : output;
+      return subAgentResult(text, singleResult, isError);
+    },
+
+    renderCall(args: any, theme: any) {
+      const path = args.path || "...";
+      const objective = args.objective
+        ? args.objective.length > 60
+          ? `${args.objective.slice(0, 60)}...`
+          : args.objective
+        : "";
+      let text = theme.fg("toolTitle", theme.bold("look_at ")) + theme.fg("dim", path);
+      if (objective) text += theme.fg("muted", ` — ${objective}`);
+      if (args.referenceFiles?.length) {
+        text += theme.fg(
+          "muted",
+          ` (+${args.referenceFiles.length} ref${args.referenceFiles.length > 1 ? "s" : ""})`,
+        );
+      }
+      return new Text(text, 0, 0);
+    },
+
+    renderResult(result: any, { expanded }: { expanded: boolean }, theme: any) {
+      const details = result.details as SingleResult | undefined;
+      if (!details) {
+        const text = result.content[0];
+        return new Text(text?.type === "text" ? text.text : "(no output)", 0, 0);
+      }
+      const container = new Container();
+      renderAgentTree(details, container, expanded, theme, {
+        label: "look_at",
+        header: "statusOnly",
+      });
+      return container;
+    },
+  };
+}
+
+export function resolveLookAtConfig(
+  deps: Pick<
+    LookAtExtensionDeps,
+    "getEnabledExtensionConfig" | "resolvePrompt"
+  > = DEFAULT_DEPS,
+): { enabled: boolean; config: LookAtConfig } {
+  const { enabled, config } = deps.getEnabledExtensionConfig(
+    "#core/look-at",
+    CONFIG_DEFAULTS,
+    { schema: LOOK_AT_CONFIG_SCHEMA },
+  );
+
+  return {
+    enabled,
+    config: {
+      systemPrompt: enabled
+        ? deps.resolvePrompt(config.promptString, config.promptFile)
+        : undefined,
+      model: config.model,
+      extensionTools: config.extensionTools,
+      builtinTools: config.builtinTools,
+    },
+  };
+}
+
+function createLookAtExtension(
+  deps: LookAtExtensionDeps = DEFAULT_DEPS,
+): (pi: ExtensionAPI) => void {
+  return function lookAtExtension(pi: ExtensionAPI): void {
+    const { enabled, config } = resolveLookAtConfig(deps);
+    if (!enabled) return;
+
+    pi.registerTool(deps.withPromptPatch(createLookAtTool(config)));
+    registerSubAgentErrorNormalization(pi, "look_at");
+  };
+}
+
+const lookAtExtension: (pi: ExtensionAPI) => void = createLookAtExtension();
+
+export default lookAtExtension;
+
+// Export for testing
+export {
+  createLookAtExtension,
+  DEFAULT_DEPS,
+  CONFIG_DEFAULTS,
+  LOOK_AT_CONFIG_SCHEMA,
+  DEFAULT_SYSTEM_PROMPT,
+  isNonEmptyString,
+  isStringArray,
+  isLookAtExtConfig,
+};

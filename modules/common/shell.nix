@@ -2,6 +2,8 @@
 {
   environment.shells = with pkgs; [
     fish
+    bashInteractive
+    zsh
   ];
 
   environment.shellAliases = {

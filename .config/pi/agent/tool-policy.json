@@ -1,0 +1,43 @@
+[
+  {
+    "tool": "bash",
+    "matches": { "cmd": ["*git add -A*", "*git add .*"] },
+    "action": "reject",
+    "message": "stage files explicitly with 'git add <file>' — unstaged changes may not be yours"
+  },
+  {
+    "tool": "bash",
+    "matches": {
+      "cmd": ["*git push --force*", "*git push -f*", "*--force-with-lease*"]
+    },
+    "action": "reject",
+    "message": "never force push. if diverged: 'git fetch origin && git rebase origin/main && git push'"
+  },
+  {
+    "tool": "bash",
+    "matches": {
+      "cmd": [
+        "*git reset --hard*",
+        "*git clean -f*",
+        "*git clean -df*",
+        "*git clean -fd*",
+        "*git checkout -f*"
+      ]
+    },
+    "action": "reject",
+    "message": "destructive git command rejected — ask for explicit authorization before discarding uncommitted work"
+  },
+  {
+    "tool": "bash",
+    "matches": { "cmd": ["rm *", "* && rm *", "* || rm *", "* ; rm *"] },
+    "action": "reject",
+    "message": "use 'trash <file>' instead of rm — recoverable deletion"
+  },
+  {
+    "tool": "apply_patch",
+    "matches": { "path": ["*.env", "*.env.*", "*id_rsa*", "*id_ed25519*"] },
+    "action": "reject",
+    "message": "patching secrets directly is blocked by policy"
+  },
+  { "tool": "*", "action": "allow" }
+]

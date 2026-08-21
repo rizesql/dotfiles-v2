@@ -9,27 +9,27 @@
           IgnoreUnknown = "AddKeysToAgent,UseKeychain";
         };
 
-        matchBlocks = {
+        settings = {
           "github.com-rizesql" = {
-            hostname = "github.com";
-            user = "git";
-            identitiesOnly = true;
-            identityFile = "~/.ssh/git_rizesql";
-            extraOptions = {
-              AddKeysToAgent = "yes";
-              UseKeychain = "yes";
-            };
+            Hostname = "github.com";
+            User = "git";
+            IdentitiesOnly = true;
+            IdentityFile = "~/.ssh/git_rizesql";
+            # ExtraOptions = {
+            AddKeysToAgent = "yes";
+            UseKeychain = "yes";
+            # };
           };
 
           "github.com-codestory" = {
-            hostname = "github.com";
-            user = "git";
-            identitiesOnly = true;
-            identityFile = "~/.ssh/git_codestory";
-            extraOptions = {
-              AddKeysToAgent = "yes";
-              UseKeychain = "yes";
-            };
+            Hostname = "github.com";
+            User = "git";
+            IdentitiesOnly = true;
+            IdentityFile = "~/.ssh/git_codestory";
+            # ExtraOptions = {
+            AddKeysToAgent = "yes";
+            UseKeychain = "yes";
+            # };
           };
         };
       };

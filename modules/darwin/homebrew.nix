@@ -7,11 +7,13 @@
     casks = [
       "zed"
       "zen"
+      "visual-studio-code"
+      "orbstack"
+      "obsidian"
     ];
     onActivation = {
       cleanup = "zap";
-      autoUpdate = true;
-      upgrade = true;
+      extraFlags = [ "--force" ];
     };
   };
 }

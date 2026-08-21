@@ -50,9 +50,5 @@ in
   fonts.packages = [
     berkeley-mono
     commit-mono-rizesql
-    pkgs.nerd-fonts.commit-mono
-    pkgs.nerd-fonts.geist-mono
-    pkgs.nerd-fonts.jetbrains-mono
-    pkgs.nerd-fonts.zed-mono
   ];
 }

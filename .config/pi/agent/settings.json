@@ -1,0 +1,11 @@
+{
+  "lastChangelogVersion": "0.84.2",
+  "theme": "catppuccin-mocha",
+  "packages": [
+    "npm:pi-antigravity",
+    "npm:@ff-labs/pi-fff"
+  ],
+  "defaultProvider": "antigravity",
+  "defaultModel": "gemini-3.7-flash",
+  "defaultThinkingLevel": "high"
+}
