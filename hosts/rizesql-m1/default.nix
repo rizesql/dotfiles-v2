@@ -19,11 +19,6 @@ lib.darwinSystem' (
 
     users.knownUsers = [ user ];
 
-    home-manager.users.${user}.home = {
-      stateVersion = "26.05";
-      homeDirectory = home;
-    };
-
     environment.etc.nix-darwin.source = "${home}/.config/nix";
     nix.settings.trusted-users = [ user ];
 

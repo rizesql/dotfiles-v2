@@ -1,0 +1,16 @@
+[user]
+email = stefan.rizescu@codestory.ro
+name = Stefan Rizescu
+signingkey = "~/.ssh/git_codestory.pub"
+
+[github]
+user = "rizesqlcs"
+
+[gpg]
+format = ssh
+
+[commit]
+gpgsign = true
+
+[url "git@github.com-codestory:"]
+	insteadOf = git@github.com:

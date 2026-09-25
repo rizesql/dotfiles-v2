@@ -1,0 +1,8 @@
+enter_accept = true
+history_filter = ["^cl", "^cd", "^ls", "^lt"]
+search_mode = "fuzzy"
+style = "auto"
+sync_frequency = "1h"
+
+[theme]
+name = "catppuccin-mocha"

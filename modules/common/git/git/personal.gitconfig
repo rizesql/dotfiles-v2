@@ -1,0 +1,16 @@
+[user]
+email = iulian.stefan.rizescu@gmail.com
+name = Stefan Rizescu
+signingkey = "~/.ssh/git_rizesql.pub"
+
+[github]
+user = "rizesql"
+
+[gpg]
+format = ssh
+
+[commit]
+gpgsign = true
+
+[url "git@github.com-rizesql:"]
+	insteadOf = git@github.com:

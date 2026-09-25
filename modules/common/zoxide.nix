@@ -1,13 +1,8 @@
 { pkgs, ... }:
 {
-  home-manager.sharedModules = [
-    {
-      programs.zoxide = {
-        enable = true;
-        package = pkgs.zoxide;
+  environment.systemPackages = [ pkgs.zoxide ];
 
-        options = [ "--cmd cd" ];
-      };
-    }
-  ];
+  programs.fish.interactiveShellInit = ''
+    ${pkgs.zoxide}/bin/zoxide init fish --cmd cd | source
+  '';
 }

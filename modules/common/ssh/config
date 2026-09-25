@@ -1,0 +1,17 @@
+IgnoreUnknown AddKeysToAgent,UseKeychain
+
+Host github.com-rizesql
+  Hostname github.com
+  User git
+  IdentitiesOnly yes
+  IdentityFile ~/.ssh/git_rizesql
+  AddKeysToAgent yes
+  UseKeychain yes
+
+Host github.com-codestory
+  Hostname github.com
+  User git
+  IdentitiesOnly yes
+  IdentityFile ~/.ssh/git_codestory
+  AddKeysToAgent yes
+  UseKeychain yes

@@ -1,0 +1,34 @@
+theme = "Catppuccin Mocha"
+font-family = CommitMono-rizesql
+font-thicken = true
+cursor-style = block
+window-theme = ghostty
+window-colorspace = display-p3
+macos-icon = custom-style
+macos-icon-ghost-color = #b4befe
+macos-icon-screen-color = #89b4fa
+window-save-state = always
+mouse-hide-while-typing = true
+window-decoration = true
+window-padding-balance = true
+macos-option-as-alt = true
+macos-non-native-fullscreen = true
+
+quick-terminal-screen = mouse
+quick-terminal-position = center
+quick-terminal-size = 1512px,952px
+quick-terminal-autohide = true
+quick-terminal-animation-duration = 0.12
+
+shell-integration-features = ssh-env
+shell-integration-features = ssh-terminfo
+
+keybind = cmd+t=unbind
+keybind = cmd+n=unbind
+keybind = cmd+c=unbind
+keybind = cmd+w=unbind
+keybind = cmd+opt+left=unbind
+keybind = cmd+opt+right=unbind
+keybind = global:ctrl+backquote=toggle_quick_terminal
+
+auto-update-channel = tip

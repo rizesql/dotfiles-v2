@@ -1,16 +1,17 @@
 { pkgs, ... }:
 {
-  home-manager.sharedModules = [
-    {
-      programs.direnv = {
-        enable = true;
-        package = pkgs.direnv;
-        silent = false;
-        nix-direnv = {
-          enable = true;
-          package = pkgs.nix-direnv;
-        };
-      };
-    }
+  environment.systemPackages = [
+    pkgs.direnv
+    pkgs.nix-direnv
   ];
+
+  environment.etc."direnv/direnvrc".text = ''
+    source ${pkgs.nix-direnv}/share/nix-direnv/direnvrc
+  '';
+
+  programs.fish.interactiveShellInit = ''
+    if not functions -q __direnv_export_eval
+      ${pkgs.direnv}/bin/direnv hook fish | source
+    end
+  '';
 }
