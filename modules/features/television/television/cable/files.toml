@@ -13,7 +13,7 @@ command = ["fd -t f --hidden --exclude .git"]
 command = "bat -n --color=always '{}'"
 
 [preview.env]
-BAT_THEME = "ansi"
+BAT_THEME = "base16"
 
 [keybindings]
 shortcut = "f1"

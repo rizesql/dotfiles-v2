@@ -1,0 +1,17 @@
+{
+  "plugins": {
+    "OSC11.nvim": {
+      "rev": "548380b6ef9f45d877215657bca55f5ca2ca4f1a",
+      "src": "https://github.com/afonsofrancof/OSC11.nvim"
+    },
+    "catppuccin": {
+      "rev": "605b4603797de970e9f3a4238c199c850da03186",
+      "src": "https://github.com/catppuccin/nvim",
+      "version": ">=0.0.0"
+    },
+    "showkeys": {
+      "rev": "cb0a50296f11f1e585acffba8c253b9e8afc1f84",
+      "src": "https://github.com/nvzone/showkeys"
+    }
+  }
+}

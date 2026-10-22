@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.cache/
+npm/
+fff/
+sessions/
+auth.json
+models-store.json
+antigravity-accounts.json
+!**/package-lock.json

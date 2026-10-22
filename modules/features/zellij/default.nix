@@ -1,22 +1,17 @@
-{ self, inputs, ... }:
 {
   flake.modules.zellij =
-    { pkgs, ... }:
+    { config, pkgs, ... }:
     let
-      zellij = self.packages.${pkgs.stdenv.hostPlatform.system}.zellij;
+      zellijConfig = pkgs.writeText "zellij-config.kdl" ''
+        ${builtins.readFile ./zellij/config.kdl}
+        layout_dir "${config.homeDirectory}/.config/zellij/layouts"
+      '';
     in
     {
-      environment.systemPackages = [ zellij ];
+      environment.systemPackages = [ pkgs.zellij ];
+      xdg.configFile = {
+        "zellij/config.kdl".source = zellijConfig;
+        "zellij/layouts".source = ./zellij/layouts;
+      };
     };
-
-  perSystem = { pkgs, ... }: {
-    packages.zellij = inputs.wrappers.lib.wrapPackage (
-      { ... }: {
-        inherit pkgs;
-        wrapperImplementation = "binary";
-        package = pkgs.zellij;
-        env.ZELLIJ_CONFIG_DIR = "${./zellij}";
-      }
-    );
-  };
 }

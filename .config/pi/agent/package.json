@@ -1,6 +1,0 @@
-{
-  "name": "my-pi-config",
-  "imports": {
-    "#core/*": "./core/*"
-  }
-}

@@ -1,0 +1,91 @@
+{
+  "$schema": "https://raw.githubusercontent.com/earendil-works/pi/main/packages/coding-agent/src/modes/interactive/theme/theme-schema.json",
+  "name": "palette",
+  "vars": {
+    "red": 1,
+    "green": 2,
+    "yellow": 3,
+    "blue": 4,
+    "magenta": 5,
+    "cyan": 6,
+    "orange": 208,
+
+    "panel1": 233,
+    "panel2": 234,
+    "panel3": 235,
+    "line": 238,
+    "lineStrong": 241,
+    "dim": 240,
+    "muted": 244,
+
+    "addBg": 22,
+    "removeBg": 52,
+    "matchBg": 58
+  },
+  "colors": {
+    "accent": "blue",
+    "border": "line",
+    "borderAccent": "blue",
+    "borderMuted": "panel3",
+    "success": "green",
+    "error": "red",
+    "warning": "yellow",
+    "muted": "muted",
+    "dim": "dim",
+    "text": "",
+    "thinkingText": "muted",
+
+    "selectedBg": "panel3",
+    "scrollbarTrack": "panel2",
+    "scrollbarThumb": "lineStrong",
+    "searchMatchBg": "matchBg",
+    "searchMatchText": "",
+
+    "userMessageBg": "panel2",
+    "userMessageText": "",
+    "customMessageBg": "panel1",
+    "customMessageText": "",
+    "customMessageLabel": "magenta",
+
+    "toolPendingBg": "panel1",
+    "toolSuccessBg": "addBg",
+    "toolErrorBg": "removeBg",
+    "toolTitle": "",
+    "toolOutput": "muted",
+
+    "mdHeading": "yellow",
+    "mdLink": "blue",
+    "mdLinkUrl": "dim",
+    "mdCode": "magenta",
+    "mdCodeBlock": "green",
+    "mdCodeBlockBorder": "line",
+    "mdQuote": "muted",
+    "mdQuoteBorder": "line",
+    "mdHr": "line",
+    "mdListBullet": "magenta",
+
+    "toolDiffAdded": "green",
+    "toolDiffRemoved": "red",
+    "toolDiffContext": "muted",
+
+    "syntaxComment": "dim",
+    "syntaxKeyword": "blue",
+    "syntaxFunction": "yellow",
+    "syntaxVariable": "",
+    "syntaxString": "green",
+    "syntaxNumber": "orange",
+    "syntaxType": "magenta",
+    "syntaxOperator": "cyan",
+    "syntaxPunctuation": "muted",
+
+    "thinkingOff": "dim",
+    "thinkingMinimal": "muted",
+    "thinkingLow": 68,
+    "thinkingMedium": 105,
+    "thinkingHigh": 135,
+    "thinkingXhigh": "magenta",
+    "thinkingMax": "red",
+
+    "bashMode": "green"
+  }
+}

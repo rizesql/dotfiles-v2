@@ -1,19 +1,31 @@
 {
-  flake.modules.pi = { config, pkgs, ... }: {
-    environment.systemPackages = with pkgs; [
-      pi-coding-agent
-      nodejs
-    ];
+  flake.modules.pi =
+    { pkgs, config, ... }:
+    let
+      repoAgent = "${config.dotfiles.checkout}/modules/features/pi/config/agent";
+    in
+    {
+      environment.systemPackages = [
+        pkgs.pi-coding-agent
+        (pkgs.writeShellApplication {
+          name = "pi-acp";
+          runtimeInputs = [ pkgs.nodejs ];
+          text = ''
+            export PI_ACP_PI_COMMAND="pi"
+            export PI_CODING_AGENT_DIR="$HOME/.pi/agent"
+            exec npx -y pi-acp@latest "$@"
+          '';
+        })
+      ];
 
-    home.file = {
-      ".pi/agent/settings.json".source = "${config.dotfiles.checkout}/.config/pi/agent/settings.json";
-      ".pi/agent/themes".source = "${config.dotfiles.checkout}/.config/pi/agent/themes";
-      ".pi/agent/extensions".source = "${config.dotfiles.checkout}/.config/pi/agent/extensions";
-      ".pi/agent/tool-policy.json".source =
-        "${config.dotfiles.checkout}/.config/pi/agent/tool-policy.json";
-      ".pi/agent/core".source = "${config.dotfiles.checkout}/.config/pi/agent/core";
-      ".pi/agent/package.json".source = "${config.dotfiles.checkout}/.config/pi/agent/package.json";
-      ".agents".source = "${config.dotfiles.checkout}/.config/agents";
+      home.file = {
+        ".pi/agent/package.json".source = "${repoAgent}/package.json";
+        ".pi/agent/settings.json".source = "${repoAgent}/settings.json";
+        ".pi/agent/APPEND_SYSTEM.md".source = "${repoAgent}/APPEND_SYSTEM.md";
+        ".pi/agent/tool-policy.json".source = "${repoAgent}/tool-policy.json";
+        ".pi/agent/themes".source = "${repoAgent}/themes";
+        ".pi/agent/core".source = "${repoAgent}/core";
+        ".pi/agent/extensions".source = "${repoAgent}/extensions";
+      };
     };
-  };
 }

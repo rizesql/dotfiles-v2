@@ -7,12 +7,10 @@
       atuin
       zoxide
       carapace
-      fzf
       direnv
       bat
       yazi
       ghostty
-      kitty
     ];
   };
 }

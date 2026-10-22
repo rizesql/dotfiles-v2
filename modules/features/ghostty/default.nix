@@ -1,9 +1,15 @@
 {
-  flake.modules.ghostty = { pkgs, config, ... }: {
-    environment.systemPackages = [
-      (if config.isDarwin then pkgs.ghostty-bin else pkgs.ghostty)
-    ];
+  flake.modules.ghostty =
+    {
+      pkgs,
+      config,
+      lib,
+      ...
+    }:
+    {
+      environment.systemPackages = lib.optionals config.isLinux [ pkgs.ghostty ];
+      homebrew.casks = lib.optionals config.isDarwin [ "ghostty" ];
 
-    xdg.configFile."ghostty/config.ghostty".source = ./config.ghostty;
-  };
+      xdg.configFile."ghostty/config.ghostty".source = ./config.ghostty;
+    };
 }

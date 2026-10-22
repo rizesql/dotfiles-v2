@@ -1,0 +1,19 @@
+{
+  "name": "pi",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#core/*": "./core/*"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "watch": "tsdown --watch"
+  },
+  "packageManager": "npm@11.11.0",
+  "dependencies": {
+    "@earendil-works/pi-ai": "^1.0.2",
+    "@earendil-works/pi-coding-agent": "^1.0.2",
+    "@earendil-works/pi-tui": "^1.0.2",
+    "typebox": "^1.3.34"
+  }
+}

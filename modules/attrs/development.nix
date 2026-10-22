@@ -4,9 +4,10 @@
       git
       lazygit
       television
-      neovim
+      nvim
       ssh
       pi
+      agents
     ];
   };
 }
