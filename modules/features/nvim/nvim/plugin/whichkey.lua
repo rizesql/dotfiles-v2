@@ -10,6 +10,7 @@ require("lazyload").on_vim_enter(function()
   require("which-key").add({
     { "<leader><tab>", group = "tabs" },
     { "<leader>c", group = "code" },
+    { "<leader>g", group = "git" },
     { "<leader>u", group = "ui" },
     { "<leader>x", group = "diagnostics/quickfix" },
     { "<leader>w", group = "windows", proxy = "<C-w>" },

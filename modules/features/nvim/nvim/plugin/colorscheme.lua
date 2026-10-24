@@ -94,6 +94,7 @@ local groups = {
   IncSearch = "CurSearch",
   MatchParen = { ctermbg = grey(3), ctermfg = MAGENTA },
   NonText = { ctermfg = grey(6) },
+  Conceal = { ctermfg = grey(10) },
   Whitespace = "NonText",
   WinSeparator = { ctermfg = grey(5) },
   Folded = { ctermfg = grey(10), ctermbg = grey(1) },
@@ -121,6 +122,18 @@ local groups = {
   Added = { ctermfg = GREEN },
   Changed = { ctermfg = BLUE },
   Removed = { ctermfg = RED },
+
+  -- Dashboard (plugin/snacks.lua), styled after Zed's welcome page. Every group needs an
+  -- attribute: an empty one counts as unset, and snacks' default links would win.
+  DashboardLogo = { ctermfg = BLUE },
+  DashboardTitle = { bold = true },
+  DashboardSubtitle = "Comment",
+  DashboardSection = { ctermfg = GREY },
+  SnacksDashboardIcon = { ctermfg = GREY },
+  SnacksDashboardDesc = { bold = true },
+  SnacksDashboardFile = { bold = true },
+  SnacksDashboardDir = "NonText",
+  SnacksDashboardKey = { ctermfg = GREY },
 
   -- Treesitter overrides; other captures link to the groups above by default
   ["@variable"] = {},

@@ -16,9 +16,5 @@ gui:
   showDivergenceFromBaseBranch: arrowAndNumber
 
 os:
-  edit: "nvim -- {{filename}}"
-  editAtLine: "nvim +{{line}} -- {{filename}}"
-  editAtLineAndWait: "nvim +{{line}} -- {{filename}}"
-  openDirInEditor: "nvim -- {{dir}}"
-  editInTerminal: true
+  editPreset: nvim-remote
   openLink: 'open -n "$(echo {{link}} | sed ''s/%3E/>/g'' | sed ''s/%2F/\//g'' | sed s/%27/\''/g )"'

@@ -52,11 +52,13 @@ export interface ToolPolicyVerdict {
 /**
  * convert a simple glob pattern (only `*` wildcards) to a regex.
  * covers common cases: `*git push*`, `rm *`, `*`.
+ * `s` lets `*` span newlines, so a rule also sees multi-line commands
+ * (heredocs, `python -c` scripts) as a whole.
  */
 function globToRegex(pattern: string) {
   const escaped = pattern.replace(/[.+^${}()|[\]\\]/g, "\\$&");
   const withWildcards = escaped.replace(/\*/g, ".*");
-  return new RegExp(`^${withWildcards}$`, "i");
+  return new RegExp(`^${withWildcards}$`, "is");
 }
 
 function toPatterns(patterns: ToolPolicyPattern) {

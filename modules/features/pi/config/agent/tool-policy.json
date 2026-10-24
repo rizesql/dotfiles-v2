@@ -39,5 +39,27 @@
     "action": "reject",
     "message": "patching secrets directly is blocked by policy"
   },
+  {
+    "tool": "bash",
+    "matches": { "cmd": ["* > /dev/null*", "* >> /dev/null*"] },
+    "action": "allow"
+  },
+  {
+    "tool": "bash",
+    "matches": {
+      "cmd": [
+        "sed -i*", "sed * -i*", "sed *--in-place*",
+        "perl -i*", "perl * -i*", "perl -pi*", "perl * -pi*",
+        "*awk *inplace*",
+        "tee *",
+        "* > *", "* >> *",
+        "*writeFileSync*", "*write_text(*", "*write_bytes(*",
+        "*open(*, 'w*", "*open(*,'w*", "*open(*, 'a*", "*open(*,'a*",
+        "*open(*, \"w*", "*open(*,\"w*", "*open(*, \"a*", "*open(*,\"a*"
+      ]
+    },
+    "action": "reject",
+    "message": "don't edit files through bash. use the edit or write tool so the change gets a review baseline. formatters and codegen are fine"
+  },
   { "tool": "*", "action": "allow" }
 ]

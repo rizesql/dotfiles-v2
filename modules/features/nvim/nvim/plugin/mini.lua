@@ -52,4 +52,19 @@ require("lazyload").on_vim_enter(function()
   vim.keymap.set("n", "yss", "ys_", { remap = true, desc = "Surround line" })
 
   require("mini.pairs").setup()
+
+  -- Hunks against the git index: gh stages, gH resets, ]h/[h move, gh is also a textobject.
+  -- Reviewing pi's edits will reuse the same keys with a different reference text.
+  require("mini.diff").setup({
+    view = {
+      style = "sign",
+      signs = { add = "▎", change = "▎", delete = "▁" },
+    },
+  })
+  vim.keymap.set("n", "<leader>go", function()
+    MiniDiff.toggle_overlay(0)
+  end, { desc = "Toggle diff overlay" })
+
+  -- Branch for the statusline, and :Git for one-off commands.
+  require("mini.git").setup()
 end)
