@@ -4,8 +4,6 @@
 -- Hide the built-in statusline/ruler until lualine loads.
 vim.opt.colorcolumn = "90,120"
 vim.opt.textwidth = 90
-vim.opt.laststatus = 0
-vim.opt.ruler = false
 
 -- Line numbers
 vim.opt.number = true
@@ -63,7 +61,7 @@ vim.opt.foldlevel = 99
 vim.opt.foldlevelstart = 99
 
 -- Completion
-vim.opt.completeopt = "menuone,noselect"
+vim.opt.completeopt = "menuone,noselect,fuzzy"
 
 -- Clipboard
 vim.opt.clipboard = "unnamedplus"

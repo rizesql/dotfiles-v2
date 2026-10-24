@@ -1,17 +1,44 @@
 {
   "plugins": {
-    "OSC11.nvim": {
-      "rev": "548380b6ef9f45d877215657bca55f5ca2ca4f1a",
-      "src": "https://github.com/afonsofrancof/OSC11.nvim"
+    "conform.nvim": {
+      "rev": "016802de402556da54c36bd7359b441266b01cdd",
+      "src": "https://github.com/stevearc/conform.nvim"
     },
-    "catppuccin": {
-      "rev": "605b4603797de970e9f3a4238c199c850da03186",
-      "src": "https://github.com/catppuccin/nvim",
+    "fff": {
+      "rev": "7353971198321b5330824c29eb4e49635c072245",
+      "src": "https://github.com/dmtrKovalenko/fff"
+    },
+    "mini.nvim": {
+      "rev": "acfc3b2702126209201ca8b38a105294fa2c1ddd",
+      "src": "https://github.com/nvim-mini/mini.nvim"
+    },
+    "nvim-lspconfig": {
+      "rev": "4d363f93c3581b9212a24f7a830d7590b3f050af",
+      "src": "https://github.com/neovim/nvim-lspconfig",
       "version": ">=0.0.0"
+    },
+    "nvim-treesitter": {
+      "rev": "a2f694478be07f89c2d03cc17858a8745a400c4b",
+      "src": "https://github.com/nvim-treesitter/nvim-treesitter",
+      "version": "'main'"
+    },
+    "oil.nvim": {
+      "rev": "d3733d933833a0e59b813ecec99341527adf0c28",
+      "src": "https://github.com/stevearc/oil.nvim"
     },
     "showkeys": {
       "rev": "cb0a50296f11f1e585acffba8c253b9e8afc1f84",
       "src": "https://github.com/nvzone/showkeys"
+    },
+    "snacks.nvim": {
+      "rev": "e6fd58c82f2f3fcddd3fe81703d47d6d48fc7b9f",
+      "src": "https://github.com/folke/snacks.nvim",
+      "version": ">=0.0.0"
+    },
+    "which-key.nvim": {
+      "rev": "fcbf4eea17cb299c02557d576f0d568878e354a4",
+      "src": "https://github.com/folke/which-key.nvim",
+      "version": ">=0.0.0"
     }
   }
 }

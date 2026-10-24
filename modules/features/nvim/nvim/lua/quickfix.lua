@@ -18,7 +18,13 @@ function M.format_diagnostic_text(diagnostic)
 
   if namespace_name then
     if diagnostic.source and diagnostic.source ~= namespace_name then
-      return string.format("[%s: %s] %s: %s", namespace_name, diagnostic.source, severity, message)
+      return string.format(
+        "[%s: %s] %s: %s",
+        namespace_name,
+        diagnostic.source,
+        severity,
+        message
+      )
     else
       return string.format("[%s] %s: %s", namespace_name, severity, message)
     end
@@ -40,9 +46,9 @@ function M.diagnostics_to_qf_items(diagnostics)
       col = diag.col + 1,
       text = M.format_diagnostic_text(diag),
       type = diag.severity == vim.diagnostic.severity.ERROR and "E"
-          or diag.severity == vim.diagnostic.severity.WARN and "W"
-          or diag.severity == vim.diagnostic.severity.INFO and "I"
-          or "N",
+        or diag.severity == vim.diagnostic.severity.WARN and "W"
+        or diag.severity == vim.diagnostic.severity.INFO and "I"
+        or "N",
     })
   end
   return items
@@ -54,8 +60,9 @@ local function qf_text_func(info)
   local wininfo = vim.fn.getwininfo(info.winid)[1]
   local is_loclist = wininfo and wininfo.loclist == 1
 
-  local items = is_loclist and vim.fn.getloclist(info.winid, { id = info.id, items = 0 }).items
-      or vim.fn.getqflist({ id = info.id, items = 0 }).items
+  local items = is_loclist
+      and vim.fn.getloclist(info.winid, { id = info.id, items = 0 }).items
+    or vim.fn.getqflist({ id = info.id, items = 0 }).items
 
   local lines = {}
   for idx = info.start_idx, info.end_idx do
@@ -67,7 +74,10 @@ local function qf_text_func(info)
     else
       local filename = vim.fn.bufname(item.bufnr)
       filename = filename == "" and "[No Name]" or vim.fn.fnamemodify(filename, ":~:.")
-      table.insert(lines, string.format("%s:%d:%d %s", filename, item.lnum, item.col, item.text or ""))
+      table.insert(
+        lines,
+        string.format("%s:%d:%d %s", filename, item.lnum, item.col, item.text or "")
+      )
     end
   end
   return lines
@@ -140,7 +150,12 @@ local function is_list_open(list_type)
       local wininfo = vim.fn.getwininfo(win)[1]
       if list_type == "loclist" and wininfo and wininfo.loclist == 1 then
         return true
-      elseif list_type == "qflist" and wininfo and wininfo.quickfix == 1 and wininfo.loclist == 0 then
+      elseif
+        list_type == "qflist"
+        and wininfo
+        and wininfo.quickfix == 1
+        and wininfo.loclist == 0
+      then
         return true
       end
     end
@@ -200,7 +215,11 @@ local function delete_items(is_loclist, is_visual)
     if start_line > end_line then
       start_line, end_line = end_line, start_line
     end
-    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
+    vim.api.nvim_feedkeys(
+      vim.api.nvim_replace_termcodes("<Esc>", true, false, true),
+      "n",
+      false
+    )
   else
     start_line = vim.fn.line(".")
     end_line = start_line

@@ -6,10 +6,30 @@ vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Go to left window", silent = tr
 vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Go to lower window", silent = true })
 vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Go to upper window", silent = true })
 vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Go to right window", silent = true })
-vim.keymap.set("n", "<C-Up>", "<cmd>resize +2<CR>", { desc = "Increase window height", silent = true })
-vim.keymap.set("n", "<C-Down>", "<cmd>resize -2<CR>", { desc = "Decrease window height", silent = true })
-vim.keymap.set("n", "<C-Right>", "<cmd>vertical resize +2<CR>", { desc = "Increase window width", silent = true })
-vim.keymap.set("n", "<C-Left>", "<cmd>vertical resize -2<CR>", { desc = "Decrease window width", silent = true })
+vim.keymap.set(
+  "n",
+  "<C-Up>",
+  "<cmd>resize +2<CR>",
+  { desc = "Increase window height", silent = true }
+)
+vim.keymap.set(
+  "n",
+  "<C-Down>",
+  "<cmd>resize -2<CR>",
+  { desc = "Decrease window height", silent = true }
+)
+vim.keymap.set(
+  "n",
+  "<C-Right>",
+  "<cmd>vertical resize +2<CR>",
+  { desc = "Increase window width", silent = true }
+)
+vim.keymap.set(
+  "n",
+  "<C-Left>",
+  "<cmd>vertical resize -2<CR>",
+  { desc = "Decrease window width", silent = true }
+)
 
 -- Move lines (alt+j/k)
 local is_mac = vim.fn.has("macunix") == 1
@@ -22,10 +42,30 @@ local function map_multiple(mode, keys, command, opts)
 end
 map_multiple("n", down_keys, ":m .+1<CR>==", { desc = "Move line down", silent = true })
 map_multiple("n", up_keys, ":m .-2<CR>==", { desc = "Move line up", silent = true })
-map_multiple("i", down_keys, "<Esc>:m .+1<CR>==gi", { desc = "Move line down", silent = true })
-map_multiple("i", up_keys, "<Esc>:m .-2<CR>==gi", { desc = "Move line up", silent = true })
-map_multiple("v", down_keys, ":m '>+1<CR>gv=gv", { desc = "Move selection down", silent = true })
-map_multiple("v", up_keys, ":m '<-2<CR>gv=gv", { desc = "Move selection up", silent = true })
+map_multiple(
+  "i",
+  down_keys,
+  "<Esc>:m .+1<CR>==gi",
+  { desc = "Move line down", silent = true }
+)
+map_multiple(
+  "i",
+  up_keys,
+  "<Esc>:m .-2<CR>==gi",
+  { desc = "Move line up", silent = true }
+)
+map_multiple(
+  "v",
+  down_keys,
+  ":m '>+1<CR>gv=gv",
+  { desc = "Move selection down", silent = true }
+)
+map_multiple(
+  "v",
+  up_keys,
+  ":m '<-2<CR>gv=gv",
+  { desc = "Move selection up", silent = true }
+)
 
 -- Buffers
 vim.keymap.set("n", "<leader>`", "<C-^>", { desc = "Alternate buffers" })
@@ -60,15 +100,45 @@ vim.keymap.set("n", "<leader>bY", function()
 end, { desc = "Yank buffer filepath (absolute)" })
 
 -- Tabs
-vim.keymap.set("n", "<leader><tab>n", "<cmd>tabnew<cr>", { desc = "New Tab", silent = true })
-vim.keymap.set("n", "<leader><tab>q", "<cmd>tabclose<cr>", { desc = "Close Tab", silent = true })
-vim.keymap.set("n", "<leader><tab>[", "<cmd>tabprevious<cr>", { desc = "Previous Tab", silent = true })
-vim.keymap.set("n", "<leader><tab>]", "<cmd>tabnext<cr>", { desc = "Next Tab", silent = true })
-vim.keymap.set("n", "[<tab>", "<cmd>tabprevious<cr>", { desc = "Previous Tab", silent = true })
+vim.keymap.set(
+  "n",
+  "<leader><tab>n",
+  "<cmd>tabnew<cr>",
+  { desc = "New Tab", silent = true }
+)
+vim.keymap.set(
+  "n",
+  "<leader><tab>q",
+  "<cmd>tabclose<cr>",
+  { desc = "Close Tab", silent = true }
+)
+vim.keymap.set(
+  "n",
+  "<leader><tab>[",
+  "<cmd>tabprevious<cr>",
+  { desc = "Previous Tab", silent = true }
+)
+vim.keymap.set(
+  "n",
+  "<leader><tab>]",
+  "<cmd>tabnext<cr>",
+  { desc = "Next Tab", silent = true }
+)
+vim.keymap.set(
+  "n",
+  "[<tab>",
+  "<cmd>tabprevious<cr>",
+  { desc = "Previous Tab", silent = true }
+)
 vim.keymap.set("n", "]<tab>", "<cmd>tabnext<cr>", { desc = "Next Tab", silent = true })
 
 -- Clear search with <esc>
-vim.keymap.set({ "n", "i" }, "<esc>", "<cmd>noh<cr><esc>", { desc = "Escape and clear hlsearch" })
+vim.keymap.set(
+  { "n", "i" },
+  "<esc>",
+  "<cmd>noh<cr><esc>",
+  { desc = "Escape and clear hlsearch" }
+)
 
 -- Save file
 vim.keymap.set({ "i", "x", "n", "s" }, "<C-s>", "<cmd>w<cr><esc>", { desc = "Save file" })
@@ -108,7 +178,12 @@ vim.keymap.set("n", "]l", function()
 end, { desc = "Next location" })
 
 -- Diagnostics
-vim.keymap.set("n", "<leader>cd", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
+vim.keymap.set(
+  "n",
+  "<leader>cd",
+  vim.diagnostic.open_float,
+  { desc = "Line Diagnostics" }
+)
 vim.keymap.set("n", "]e", function()
   vim.diagnostic.jump({ count = 1, severity = vim.diagnostic.severity.ERROR })
 end, { desc = "Next Error", silent = true })

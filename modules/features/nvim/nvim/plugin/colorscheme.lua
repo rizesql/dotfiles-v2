@@ -1,5 +1,7 @@
 vim.cmd.highlight("clear")
-if vim.g.syntax_on then vim.cmd.syntax("reset") end
+if vim.g.syntax_on then
+  vim.cmd.syntax("reset")
+end
 vim.g.colors_name = "rizesql"
 vim.o.termguicolors = false
 
@@ -9,10 +11,14 @@ local GREY = BRIGHT
 
 -- Generated 6×6×6 cube: each axis runs 0 (background) to 5 (full base color),
 -- so low values are base colors tinted faintly over the background.
-local function rgb(r, g, b) return 16 + r * 36 + g * 6 + b end
+local function rgb(r, g, b)
+  return 16 + r * 36 + g * 6 + b
+end
 
 -- Generated 24-step ramp: 0 ≈ background, 23 ≈ foreground, in light themes too.
-local function grey(n) return 232 + n end
+local function grey(n)
+  return 232 + n
+end
 
 ---@type table<string, string | vim.api.keyset.highlight>
 local groups = {

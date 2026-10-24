@@ -3,5 +3,10 @@ require("lazyload").on_vim_enter(function()
     { src = "https://github.com/nvzone/showkeys" },
   })
 
-  vim.keymap.set("n", "<leader>uk", "<cmd>ShowkeysToggle<CR>", { desc = "Toggle showkeys", silent = true })
+  vim.keymap.set(
+    "n",
+    "<leader>uk",
+    "<cmd>ShowkeysToggle<CR>",
+    { desc = "Toggle showkeys", silent = true }
+  )
 end)

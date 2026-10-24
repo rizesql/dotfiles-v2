@@ -12,7 +12,7 @@ _G.Config = {
   use_treesitter_parser = true,
   use_nvim_treesitter = true,
 
-  use_codediff = true
+  use_codediff = true,
 }
 
 vim.env.DOTFILES = vim.env.DOTFILES or vim.fs.normalize("~/.dotfiles")
