@@ -2,8 +2,17 @@
   "defaultProvider": "claude-bridge",
   "defaultModel": "claude-opus-5-5",
   "defaultThinkingLevel": "high",
-  "defaultTools": ["read", "bash", "write", "edit"],
-  "packages": ["npm:pi-antigravity", "npm:@ff-labs/pi-fff", "npm:pi-claude-bridge"],
+  "defaultTools": [
+    "read",
+    "bash",
+    "write",
+    "edit"
+  ],
+  "packages": [
+    "npm:pi-antigravity",
+    "npm:@ff-labs/pi-fff",
+    "npm:pi-claude-bridge"
+  ],
   "lastChangelogVersion": "1.0.0",
   "theme": "palette",
   "quietStartup": true,
@@ -16,5 +25,6 @@
   "compaction": {
     "enabled": true
   },
-  "deviceId": "11ab1fff-658e-4a9f-aca7-f91b39b07ff1"
+  "deviceId": "11ab1fff-658e-4a9f-aca7-f91b39b07ff1",
+  "hideThinkingBlock": false
 }

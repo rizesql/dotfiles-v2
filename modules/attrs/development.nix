@@ -8,6 +8,7 @@
       ssh
       pi
       agents
+      claude
     ];
   };
 }

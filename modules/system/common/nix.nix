@@ -50,5 +50,7 @@
         nix-output-monitor
         nixfmt
       ];
+
+      nixpkgs.config.allowUnfree = true;
     };
 }
