@@ -3,7 +3,11 @@
   "defaultModel": "claude-opus-5-5",
   "defaultThinkingLevel": "medium",
   "defaultTools": ["read", "bash", "write", "edit"],
-  "packages": ["npm:pi-antigravity", "npm:@ff-labs/pi-fff", "npm:pi-claude-bridge"],
+  "packages": [
+    "npm:pi-antigravity@0.9.0",
+    "npm:@ff-labs/pi-fff@0.11.0",
+    "npm:pi-claude-bridge@0.9.3"
+  ],
   "lastChangelogVersion": "1.0.0",
   "theme": "palette",
   "quietStartup": true,

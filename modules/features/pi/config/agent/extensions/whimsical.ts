@@ -1,4 +1,4 @@
-import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 
 const messages = [
   // Short
@@ -634,74 +634,39 @@ function pickRandom() {
   return messages[Math.floor(Math.random() * messages.length)]!;
 }
 
+/**
+ * a dim line above the editor while the agent runs; the widget's row goes away with it.
+ * agent_start/agent_end rather than per turn, so the row doesn't blink between tool calls.
+ */
 export default function whimsical(pi: ExtensionAPI) {
   let interval: ReturnType<typeof setInterval> | null = null;
 
-  pi.on("turn_start", async () => {
-    pi.events.emit("editor:set-label", {
-      key: "whimsical",
-      text: pickRandom(),
-      position: "top",
-      align: "right",
-    });
+  pi.on("agent_start", async (_event, ctx) => {
+    if (!ctx.hasUI) {
+      return;
+    }
 
-    interval = setInterval(() => {
-      pi.events.emit("editor:set-label", {
-        key: "whimsical",
-        text: pickRandom(),
-        position: "top",
-        align: "right",
+    const show = () =>
+      ctx.ui.setWidget("whimsical", [ctx.ui.theme.fg("dim", pickRandom())], {
+        placement: "aboveEditor",
       });
-    }, 3000);
-    // ctx.ui.setWorkingMessage(pickRandom());
+    show();
+    if (interval) {
+      clearInterval(interval);
+    }
+    interval = setInterval(show, 3000);
   });
 
-  const cleanup = () => {
+  const cleanup = async (_event: unknown, ctx: ExtensionContext) => {
     if (interval) {
       clearInterval(interval);
       interval = null;
     }
-    pi.events.emit("editor:remove-label", { key: "whimsical" });
+    if (ctx.hasUI) {
+      ctx.ui.setWidget("whimsical", undefined);
+    }
   };
 
-  pi.on("turn_end", cleanup);
+  pi.on("agent_end", cleanup);
   pi.on("session_shutdown", cleanup);
-
-  // pi.on("turn_end", async (_event, ctx) => {
-  //   ctx.ui.setWorkingMessage();
-  // });
 }
-
-// export default function whimsical(pi: ExtensionAPI): void {
-//   let interval: ReturnType<typeof setInterval> | null = null;
-
-//   pi.on("turn_start", () => {
-//     const pick = () => messages[Math.floor(Math.random() * messages.length)];
-//     pi.events.emit("editor:set-label", {
-//       key: "whimsical",
-//       text: pick(),
-//       position: "top",
-//       align: "right",
-//     });
-
-//     interval = setInterval(() => {
-//       pi.events.emit("editor:set-label", {
-//         key: "whimsical",
-//         text: pick(),
-//         position: "top",
-//         align: "right",
-//       });
-//     }, 4000);
-//   });
-
-//   const cleanup = () => {
-//     if (interval) {
-//       clearInterval(interval);
-//       interval = null;
-//     }
-//     pi.events.emit("editor:remove-label", { key: "whimsical" });
-//   };
-
-//   pi.on("turn_end", cleanup);
-//   pi.on("session_shutdown", cleanup);
-// }

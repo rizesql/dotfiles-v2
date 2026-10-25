@@ -116,6 +116,14 @@ Snacks.setup({
             require("fff").live_grep()
           end,
         },
+        {
+          icon = "\u{f0e2} ",
+          key = "s",
+          desc = "Restore Session",
+          action = function()
+            require("session").restore()
+          end,
+        },
         { icon = "\u{f07c} ", key = "e", desc = "Explore", action = ":Oil" },
         {
           icon = "\u{f15b} ",
@@ -162,7 +170,22 @@ Snacks.setup({
   -- Skip treesitter and LSP on huge files; draw `nvim file` before plugins finish loading.
   bigfile = { enabled = true },
   quickfile = { enabled = true },
+  scroll = { enabled = true },
+  indent = { enabled = true },
+  -- ii / ai select the indent scope under the cursor; [i / ]i jump to its edges.
+  scope = { enabled = true },
+  -- zen's dimmed backdrop needs termguicolors, so snacks skips it under this colorscheme.
+  zen = {},
+  toggle = {},
 })
+
+-- Toggles; which-key shows each one's current state.
+Snacks.toggle.option("wrap", { name = "Wrap" }):map("<leader>uw")
+Snacks.toggle.indent():map("<leader>ug")
+Snacks.toggle.dim():map("<leader>uD")
+Snacks.toggle.scroll():map("<leader>uS")
+Snacks.toggle.zen():map("<leader>uz")
+Snacks.toggle.zoom():map("<leader>uZ")
 
 -- Git
 -- lazygit's nvim-remote preset (modules/features/lazygit/config.yml) opens files with

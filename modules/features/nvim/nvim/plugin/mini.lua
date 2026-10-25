@@ -54,12 +54,15 @@ require("lazyload").on_vim_enter(function()
   require("mini.pairs").setup()
 
   -- Hunks against the git index: gh stages, gH resets, ]h/[h move, gh is also a textobject.
-  -- Reviewing pi's edits will reuse the same keys with a different reference text.
+  -- Files pi edited diff against their pre-pi baseline (lua/pi_review.lua); the rest
+  -- fall through to git.
+  local git = require("mini.diff").gen_source.git()
   require("mini.diff").setup({
     view = {
       style = "sign",
       signs = { add = "▎", change = "▎", delete = "▁" },
     },
+    source = { require("pi_review").source, git },
   })
   vim.keymap.set("n", "<leader>go", function()
     MiniDiff.toggle_overlay(0)
@@ -67,4 +70,16 @@ require("lazyload").on_vim_enter(function()
 
   -- Branch for the statusline, and :Git for one-off commands.
   require("mini.git").setup()
+
+  -- One session per cwd (lua/session.lua). Terminals (pi, lazygit) can't be restored.
+  -- autowrite is off because write_on_exit already writes on VimLeavePre.
+  vim.opt.sessionoptions:remove({ "blank", "terminal" })
+  require("mini.sessions").setup({ autowrite = false, file = "" })
+  local session = require("session")
+  vim.api.nvim_create_autocmd("VimLeavePre", {
+    group = vim.api.nvim_create_augroup("session-write", { clear = true }),
+    callback = session.write_on_exit,
+  })
+  vim.keymap.set("n", "<leader>qs", session.restore, { desc = "Restore session" })
+  vim.keymap.set("n", "<leader>qS", session.select, { desc = "Select session" })
 end)

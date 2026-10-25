@@ -11,6 +11,8 @@ require("lazyload").on_vim_enter(function()
     { "<leader><tab>", group = "tabs" },
     { "<leader>c", group = "code" },
     { "<leader>g", group = "git" },
+    { "<leader>p", group = "pi" },
+    { "<leader>q", group = "session" },
     { "<leader>u", group = "ui" },
     { "<leader>x", group = "diagnostics/quickfix" },
     { "<leader>w", group = "windows", proxy = "<C-w>" },

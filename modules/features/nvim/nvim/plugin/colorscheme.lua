@@ -101,8 +101,10 @@ local groups = {
   QuickFixLine = { bold = true },
 
   -- Floats, menus, status and tab lines
-  NormalFloat = { ctermbg = grey(2) },
-  FloatBorder = { ctermfg = grey(6), ctermbg = grey(2) },
+  -- Floats keep the editor background and stand out by their border: every dim fg above
+  -- (Comment, NonText, LineNr) is tuned against the background, and loses contrast on grey.
+  NormalFloat = "Normal",
+  FloatBorder = { ctermfg = grey(6) },
   Pmenu = { ctermbg = grey(2) },
   PmenuSel = { ctermbg = grey(5), bold = true },
   PmenuSbar = "Pmenu",
@@ -134,6 +136,12 @@ local groups = {
   SnacksDashboardFile = { bold = true },
   SnacksDashboardDir = "NonText",
   SnacksDashboardKey = { ctermfg = GREY },
+
+  -- pi review (lua/pi_review.lua): pi's lines, the lines they replaced, and the hunk header
+  PiReviewAdd = { ctermbg = rgb(0, 1, 0) },
+  PiReviewDelete = { ctermbg = rgb(1, 0, 0), ctermfg = grey(14) },
+  PiReviewHeader = { ctermbg = rgb(1, 0, 1), ctermfg = MAGENTA, bold = true },
+  PiReviewHint = { ctermbg = rgb(1, 0, 1), ctermfg = grey(12) },
 
   -- Treesitter overrides; other captures link to the groups above by default
   ["@variable"] = {},

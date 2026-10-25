@@ -7,14 +7,19 @@ require("lazyload").on_vim_enter(function()
 
   require("conform").setup({
     -- Filetypes without a formatter here fall back to their language server.
-    format_on_save = function()
-      if not vim.g.auto_format then
+    -- Not while a file is under pi review (lua/pi_review.lua): formatting would fold
+    -- unrelated changes into pi's hunks. <leader>cf still formats on demand.
+    format_on_save = function(buf)
+      if not vim.g.auto_format or vim.b[buf].pi_review then
         return
       end
       return { timeout_ms = 5000, lsp_format = "fallback" }
     end,
     formatters_by_ft = {
       lua = { "stylua" },
+      -- nixd doesn't format without a configured formatter; nixfmt is the flake's own
+      -- `nix fmt` (modules/tools.nix).
+      nix = { "nixfmt" },
     },
   })
 
@@ -22,8 +27,15 @@ require("lazyload").on_vim_enter(function()
     require("conform").format({ lsp_format = "fallback" })
   end, { desc = "Format" })
 
-  vim.keymap.set("n", "<leader>uf", function()
-    vim.g.auto_format = not vim.g.auto_format
-    vim.notify("Auto-format: " .. (vim.g.auto_format and "on" or "off"))
-  end, { desc = "Toggle auto-format" })
+  Snacks.toggle
+    .new({
+      name = "Auto-format",
+      get = function()
+        return vim.g.auto_format == true
+      end,
+      set = function(state)
+        vim.g.auto_format = state
+      end,
+    })
+    :map("<leader>uf")
 end)

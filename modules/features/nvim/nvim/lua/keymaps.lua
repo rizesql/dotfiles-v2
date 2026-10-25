@@ -76,17 +76,22 @@ end
 for _, key in ipairs({ "<S-h>", "<leader>bp", "[b" }) do
   vim.keymap.set("n", key, "<cmd>bprevious<cr>", { desc = "Prev buffer" })
 end
-vim.keymap.set("n", "<leader>bq", "<cmd>bd %<cr>", { desc = "Delete buffer" })
+-- Keeps the window open, showing another buffer, so splits survive.
+vim.keymap.set("n", "<leader>bq", function()
+  Snacks.bufdelete()
+end, { desc = "Delete buffer" })
 vim.keymap.set("n", "<leader>bo", function()
   local visible = {}
   for _, win in pairs(vim.api.nvim_list_wins()) do
     visible[vim.api.nvim_win_get_buf(win)] = true
   end
-  for _, buf in pairs(vim.api.nvim_list_bufs()) do
-    if not visible[buf] then
-      vim.api.nvim_buf_delete(buf, {})
-    end
-  end
+  -- Only touches listed buffers, so hidden pi sessions survive; asks before dropping
+  -- unsaved changes.
+  Snacks.bufdelete({
+    filter = function(buf)
+      return not visible[buf]
+    end,
+  })
 end, { desc = "Close all other buffers" })
 vim.keymap.set("n", "<leader>by", function()
   local path = vim.fn.fnamemodify(vim.fn.expand("%"), ":.")

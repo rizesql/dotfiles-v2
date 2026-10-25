@@ -1,7 +1,7 @@
 -- Editor options.
 -- Sourced from init.lua before any plugin/ files.
 
--- Hide the built-in statusline/ruler until lualine loads.
+-- Rulers at the wrap width and a hard limit.
 vim.opt.colorcolumn = "90,120"
 vim.opt.textwidth = 90
 
@@ -9,7 +9,7 @@ vim.opt.textwidth = 90
 vim.opt.number = true
 vim.opt.relativenumber = false
 
--- Tabs and indentation defaults (overridden per-filetype in plugin/lang/ via FileType autocmds)
+-- Tabs and indentation defaults (overridden per-filetype in ftplugin/)
 vim.opt.tabstop = 2
 vim.opt.softtabstop = 2
 vim.opt.shiftwidth = 2
@@ -34,7 +34,8 @@ vim.opt.backupcopy = "yes"
 
 -- Display
 vim.opt.signcolumn = "yes"
-vim.opt.winborder = "solid"
+-- Floats share the editor background (plugin/colorscheme.lua), so they need a drawn edge.
+vim.opt.winborder = "rounded"
 vim.opt.cursorline = false
 vim.opt.wrap = false
 vim.opt.linebreak = true

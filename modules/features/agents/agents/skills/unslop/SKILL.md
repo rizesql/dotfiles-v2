@@ -1,6 +1,8 @@
 ---
 name: unslop
-description: Cut AI tells from any writing. Must always apply.
+description: |
+  Edit prose to cut AI tells and add a human voice. Use when writing or revising docs,
+  READMEs, blog posts, PR descriptions, or when the user asks to unslop or de-AI text.
 ---
 
 # Unslop

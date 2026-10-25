@@ -5,7 +5,7 @@ vim.diagnostic.config({
   severity_sort = true,
 })
 
-vim.keymap.set("n", "<leader>ud", function()
-  vim.diagnostic.enable(not vim.diagnostic.is_enabled())
-  vim.notify("Diagnostics: " .. (vim.diagnostic.is_enabled() and "on" or "off"))
-end, { desc = "Toggle diagnostics" })
+-- Deferred: this file sources before plugin/snacks.lua defines Snacks.
+require("lazyload").on_vim_enter(function()
+  Snacks.toggle.diagnostics():map("<leader>ud")
+end)

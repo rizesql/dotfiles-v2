@@ -22,12 +22,8 @@ import type { TUI, EditorTheme, TuiMouseEvent } from "@earendil-works/pi-tui";
 import { visibleWidth } from "@earendil-works/pi-tui";
 import type { KeybindingsManager } from "@earendil-works/pi-coding-agent";
 import type { TextContent } from "@earendil-works/pi-ai";
-import { execFile } from "node:child_process";
-import { promisify } from "node:util";
 
 import { boxBorderLR, boxRow } from "#core/box-chrome.ts";
-
-const execFileAsync = promisify(execFile);
 
 interface Label {
   key: string;
@@ -265,15 +261,6 @@ export function formatTokens(n: number) {
   return String(n);
 }
 
-export function shortenPath(cwd: string) {
-  const home = process.env.HOME || process.env.USERPROFILE || "";
-  if (home && cwd.startsWith(home)) {
-    return "~" + cwd.slice(home.length);
-  }
-
-  return cwd;
-}
-
 /**
  * estimate context tokens from session entries using chars/4 heuristic.
  * fallback when provider hasn't reported usage yet (e.g., after compaction).
@@ -354,69 +341,18 @@ export function updateStatsLabels(
     );
   }
 
-  // top-right: effort is the only model setting that changes during a session
+  // top-right: model and effort, the settings that can change during a session
   const thinkingLevel = pi.getThinkingLevel();
-  if (thinkingLevel && thinkingLevel !== "off") {
-    editor.setLabel("effort", thinkingLevel, "top", "right");
+  const parts = [model?.id, thinkingLevel !== "off" ? thinkingLevel : undefined].filter(Boolean);
+  if (parts.length > 0) {
+    editor.setLabel("model", parts.join(SEPARATOR), "top", "right");
   } else {
-    editor.removeLabel("effort");
-  }
-}
-
-async function getGitDiffStats(cwd: string) {
-  try {
-    const { stdout } = await execFileAsync("git", ["diff", "--stat"], {
-      cwd,
-      timeout: 3000,
-    });
-
-    const out = stdout.trim();
-    if (!out) {
-      return "";
-    }
-
-    // last line is summary: " N files changed, N insertions(+), N deletions(-)"
-    const lines = out.split("\n");
-    const summary = lines[lines.length - 1];
-    if (!summary) {
-      return "";
-    }
-
-    const filesMatch = summary.match(/(\d+)\s+files?\s+changed/);
-    const insMatch = summary.match(/(\d+)\s+insertions?\(\+\)/);
-    const delMatch = summary.match(/(\d+)\s+deletions?\(-\)/);
-
-    if (!filesMatch) {
-      return "";
-    }
-
-    const parts = [`${filesMatch[1]} files changed`];
-    if (insMatch) {
-      parts.push(`+${insMatch[1]}`);
-    }
-    if (delMatch) {
-      parts.push(`-${delMatch[1]}`);
-    }
-
-    return parts.join(" ");
-  } catch {
-    return "";
+    editor.removeLabel("model");
   }
 }
 
 export default function editorExtension(pi: ExtensionAPI) {
   let editor: LabeledEditor | null = null;
-  let gitBranch: string | null = null;
-  let branchUnsub: (() => void) | null = null;
-
-  const updateGitLabel = async (cwd: string) => {
-    const diffStats = await getGitDiffStats(cwd);
-    if (diffStats) {
-      editor?.setLabel("git-changes", diffStats, "bottom", "left");
-    } else {
-      editor?.removeLabel("git-changes");
-    }
-  };
 
   pi.on("session_start", async (_event, ctx) => {
     if (!ctx.hasUI) {
@@ -433,46 +369,18 @@ export default function editorExtension(pi: ExtensionAPI) {
       return editor;
     });
 
-    // replace footer with empty component — we show its data in the borders
-    ctx.ui.setFooter((tui, _theme, footerData) => {
-      gitBranch = footerData.getGitBranch();
-      branchUnsub = footerData.onBranchChange(() => {
-        gitBranch = footerData.getGitBranch();
-        updateBottomLabel();
-        tui.requestRender();
-      });
+    // replace footer with empty component — the borders carry what's worth showing
+    ctx.ui.setFooter(() => ({
+      dispose: () => {},
+      invalidate: () => {},
+      render: () => [],
+    }));
 
-      updateBottomLabel();
-
-      return {
-        dispose: () => {
-          branchUnsub?.();
-          branchUnsub = null;
-        },
-        invalidate: () => {},
-        render: () => [],
-      };
-    });
-
-    // set initial bottom label with cwd
-    function updateBottomLabel() {
-      if (!editor) {
-        return;
-      }
-
-      const cwd = shortenPath(ctx.cwd);
-      const branchText = gitBranch ? `(${gitBranch})` : "";
-      editor.setLabel("cwd", `${cwd} ${branchText}`.trim(), "bottom", "right");
-    }
-
-    updateBottomLabel();
     updateStatsLabels(editor!, pi, ctx);
-    await updateGitLabel(ctx.cwd);
   });
 
   pi.on("agent_end", async (_event, ctx) => {
     updateStatsLabels(editor, pi, ctx);
-    await updateGitLabel(ctx.cwd);
   });
 
   // Provider usage becomes authoritative at message_end. Refresh there rather
@@ -516,11 +424,7 @@ export default function editorExtension(pi: ExtensionAPI) {
     updateStatsLabels(editor, pi, ctx);
   });
 
-  pi.on("thinking_level_select", async (event) => {
-    if (event.level === "off") {
-      editor?.removeLabel("effort");
-    } else {
-      editor?.setLabel("effort", event.level, "top", "right");
-    }
+  pi.on("thinking_level_select", async (_event, ctx) => {
+    updateStatsLabels(editor, pi, ctx);
   });
 }

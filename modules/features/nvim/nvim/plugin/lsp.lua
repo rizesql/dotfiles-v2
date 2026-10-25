@@ -117,13 +117,28 @@ require("lazyload").on_vim_enter(function()
     end,
   })
 
-  vim.keymap.set("n", "<leader>uh", function()
-    vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
-  end, { desc = "Toggle inlay hints" })
+  -- Global, unlike Snacks.toggle.inlay_hints(), which only toggles the current buffer.
+  Snacks.toggle
+    .new({
+      name = "Inlay Hints",
+      get = function()
+        return vim.lsp.inlay_hint.is_enabled()
+      end,
+      set = function(state)
+        vim.lsp.inlay_hint.enable(state)
+      end,
+    })
+    :map("<leader>uh")
 
-  vim.keymap.set("n", "<leader>ul", function()
-    local enabled = not vim.lsp.codelens.is_enabled()
-    vim.lsp.codelens.enable(enabled)
-    vim.notify("Codelens: " .. (enabled and "on" or "off"))
-  end, { desc = "Toggle codelens" })
+  Snacks.toggle
+    .new({
+      name = "Codelens",
+      get = function()
+        return vim.lsp.codelens.is_enabled()
+      end,
+      set = function(state)
+        vim.lsp.codelens.enable(state)
+      end,
+    })
+    :map("<leader>ul")
 end)

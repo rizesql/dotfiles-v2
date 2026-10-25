@@ -11,7 +11,7 @@
 
       homeFiles = lib.mapAttrsToList (target: entry: {
         inherit target;
-        source = toString entry.source;
+        source = if builtins.isPath entry.source then "${entry.source}" else toString entry.source;
       }) config.home.file;
 
       homeDirectories = lib.mapAttrsToList (target: entry: {
@@ -21,7 +21,7 @@
 
       xdgConfigFiles = lib.mapAttrsToList (target: entry: {
         target = ".config/${target}";
-        source = toString entry.source;
+        source = if builtins.isPath entry.source then "${entry.source}" else toString entry.source;
       }) config.xdg.configFile;
 
       files = homeFiles ++ xdgConfigFiles;

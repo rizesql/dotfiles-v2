@@ -29,15 +29,26 @@
   },
   {
     "tool": "bash",
-    "matches": { "cmd": ["rm *", "* && rm *", "* || rm *", "* ; rm *"] },
+    "matches": {
+      "cmd": [
+        "rm *", "* && rm *", "* || rm *", "* ; rm *",
+        "xargs rm*", "xargs * rm*", "find * -delete*"
+      ]
+    },
     "action": "reject",
     "message": "use 'trash <file>' instead of rm — recoverable deletion"
   },
   {
-    "tool": "apply_patch",
+    "tool": "edit",
     "matches": { "path": ["*.env", "*.env.*", "*id_rsa*", "*id_ed25519*"] },
     "action": "reject",
-    "message": "patching secrets directly is blocked by policy"
+    "message": "editing secrets directly is blocked by policy"
+  },
+  {
+    "tool": "write",
+    "matches": { "path": ["*.env", "*.env.*", "*id_rsa*", "*id_ed25519*"] },
+    "action": "reject",
+    "message": "writing secrets directly is blocked by policy"
   },
   {
     "tool": "bash",
